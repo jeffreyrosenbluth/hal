@@ -13,8 +13,9 @@ const gui = new dat.GUI()
 const textureLoader = new THREE.TextureLoader()
 const cubeTextureLoader = new THREE.CubeTextureLoader()
 
-const redMatcap = textureLoader.load('/textures/matcaps/red.png')
-const goldMatcap = textureLoader.load('/textures/matcaps/gold.png')
+const redMatcap = textureLoader.load('/textures/matcaps/red.png');
+const goldMatcap = textureLoader.load('/textures/matcaps/gold.png');
+const fibers = textureLoader.load('/textures/fibers2.jpeg');
 
 const environmentMapTexture = cubeTextureLoader.load([
     '/textures/environmentMaps/city/px.png',
@@ -36,8 +37,13 @@ light.position.y = 3
 light.position.z = 4
 scene.add(light)
 
-const sphereMaterial = new THREE.MeshMatcapMaterial()
-sphereMaterial.matcap = redMatcap
+const sphereMaterial = new THREE.MeshMatcapMaterial();
+sphereMaterial.matcap = redMatcap;
+sphereMaterial.transparent = true;
+// sphereMaterial.opacity = 0.2;
+sphereMaterial.alphaMap = fibers;
+sphereMaterial.alphaTest = 0.0;
+sphereMaterial.side = THREE.DoubleSide;
 
 const ballMaterial = new THREE.MeshMatcapMaterial()
 ballMaterial.matcap = goldMatcap
@@ -53,10 +59,11 @@ const tweaks = {
 }
 
 const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(0.82, 64, 64),
+    new THREE.SphereGeometry(0.83, 64, 64),
     sphereMaterial
 )
 sphere.geometry.setAttribute('uv2', new THREE.BufferAttribute(sphere.geometry.attributes.uv.array, 2))
+// sphere.rotation.x = -1.0;
 // sphere.position.x = - 1.5
 
 const cyl1 = new THREE.Mesh(
@@ -88,15 +95,16 @@ cyl3.position.y = -0.16;
 cyl3.position.x = -0.18;
 
 const torus = new THREE.Mesh(
-    new THREE.TorusGeometry(1.0, 0.1, 64, 128),
+    new THREE.TorusGeometry(1.05, 0.1, 64, 128),
     material
 )
 torus.geometry.setAttribute('uv2', new THREE.BufferAttribute(torus.geometry.attributes.uv.array, 2))
 // torus.position.x = 1.5
 scene.add(sphere, cyl1, cyl2, cyl3, torus)
 
-// let sphereFolder = gui.addFolder('Sphere');
-// sphereFolder.add(sphere, 'scale', 0, 3.1415, 0.01).name('Radius');
+let sphereFolder = gui.addFolder('Sphere');
+sphereFolder.add(sphereMaterial, 'alphaTest', 0, 1, 0.01).name('Alpha');
+sphereFolder.add(sphere.rotation, 'x', 0, 3.1415, 0.01).name('Rotation');
 let ringFolder = gui.addFolder('Ring');
 ringFolder.add(material, 'metalness').min(0).max(1).step(0.0001).name('Reflectivity');
 ringFolder.add(material, 'roughness').min(0).max(1).step(0.0001).name('Roughness');
