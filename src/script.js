@@ -18,12 +18,12 @@ const goldMatcap = textureLoader.load('/textures/matcaps/gold.png');
 const fibers = textureLoader.load('/textures/fibers2.jpeg');
 
 const environmentMapTexture = cubeTextureLoader.load([
-    '/textures/environmentMaps/city/px.png',
-    '/textures/environmentMaps/city/nx.png',
-    '/textures/environmentMaps/city/py.png',
-    '/textures/environmentMaps/city/ny.png',
-    '/textures/environmentMaps/city/pz.png',
-    '/textures/environmentMaps/city/nz.png'
+    '/textures/environmentMaps/bridge/px.png',
+    '/textures/environmentMaps/bridge/nx.png',
+    '/textures/environmentMaps/bridge/py.png',
+    '/textures/environmentMaps/bridge/ny.png',
+    '/textures/environmentMaps/bridge/pz.png',
+    '/textures/environmentMaps/bridge/nz.png'
 ])
 
 const canvas = document.querySelector('canvas.webgl')
@@ -40,7 +40,6 @@ scene.add(light)
 const sphereMaterial = new THREE.MeshMatcapMaterial();
 sphereMaterial.matcap = redMatcap;
 sphereMaterial.transparent = true;
-// sphereMaterial.opacity = 0.2;
 sphereMaterial.alphaMap = fibers;
 sphereMaterial.alphaTest = 0.0;
 sphereMaterial.side = THREE.DoubleSide;
