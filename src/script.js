@@ -2,6 +2,7 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 const gui = new dat.GUI()
 
@@ -22,6 +23,8 @@ const environmentMapTexture = cubeTextureLoader.load([
     '/textures/environmentMaps/bridge/nz.png'
 ])
 
+const gltfLoader = new GLTFLoader();
+
 const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
@@ -36,16 +39,17 @@ scene.add(light)
 const sphereMaterial = new THREE.MeshMatcapMaterial();
 sphereMaterial.matcap = redMatcap;
 sphereMaterial.transparent = true;
-sphereMaterial.alphaMap = fibers;
-sphereMaterial.alphaTest = 0.4;
+// sphereMaterial.alphaMap = fibers;
+sphereMaterial.opacity = 0.3
+// sphereMaterial.alphaTest = 0.25;
 sphereMaterial.side = THREE.DoubleSide;
 
 const ballMaterial = new THREE.MeshMatcapMaterial()
 ballMaterial.matcap = goldMatcap
 
 const material = new THREE.MeshStandardMaterial()
-material.metalness = 1.0
-material.roughness = 0.0
+material.metalness = 0.8
+material.roughness = 0.1
 material.envMap = environmentMapTexture
 
 const tweaks = {
@@ -92,11 +96,30 @@ starMaterial.flatShading = true;
 
 
 const star = new THREE.Mesh(new THREE.OctahedronGeometry(0.2, 1), starMaterial);
-scene.add(sphere, cyl1, cyl2, cyl3, torus, star);
+scene.add(sphere, torus);
+
+gltfLoader.load(
+    '/models/barrel/barrel.gltf',
+    (gltf) =>
+    {
+        const barrel = gltf.scene.children[0];
+        barrel.position.y = -0.45;
+        scene.add(barrel);
+    },
+    (progress) =>
+    {
+        console.log('progress')
+        console.log(progress)
+    },
+    (error) =>
+    {
+        console.log('error')
+        console.log(error)
+    }
+)
 
 let sphereFolder = gui.addFolder('Sphere');
-sphereFolder.add(sphereMaterial, 'alphaTest', 0, 1, 0.01).name('Alpha');
-sphereFolder.add(sphere.rotation, 'x', 0, 3.1415, 0.01).name('Rotation');
+sphereFolder.add(sphereMaterial, 'opacity', 0, 1, 0.01).name('Opacity');
 let ringFolder = gui.addFolder('Ring');
 ringFolder.add(material, 'metalness').min(0).max(1).step(0.0001).name('Reflectivity');
 ringFolder.add(material, 'roughness').min(0).max(1).step(0.0001).name('Roughness');
