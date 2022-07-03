@@ -3,7 +3,6 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
 
-// Debug
 const gui = new dat.GUI()
 
 // Textures
@@ -38,7 +37,7 @@ const sphereMaterial = new THREE.MeshMatcapMaterial();
 sphereMaterial.matcap = redMatcap;
 sphereMaterial.transparent = true;
 sphereMaterial.alphaMap = fibers;
-sphereMaterial.alphaTest = 0.0;
+sphereMaterial.alphaTest = 0.4;
 sphereMaterial.side = THREE.DoubleSide;
 
 const ballMaterial = new THREE.MeshMatcapMaterial()
@@ -51,52 +50,49 @@ material.envMap = environmentMapTexture
 
 const tweaks = {
     save: () => takeScreenshot(3000, 3000),
-    cyl_length: 0.3,
+    cyl_length: 0.4,
 }
 
 const sphere = new THREE.Mesh(
     new THREE.SphereGeometry(0.83, 64, 64),
     sphereMaterial
 )
-sphere.geometry.setAttribute('uv2', new THREE.BufferAttribute(sphere.geometry.attributes.uv.array, 2))
-// sphere.rotation.x = -1.0;
-// sphere.position.x = - 1.5
+sphere.rotation.x = 0.5;
 
 const cyl1 = new THREE.Mesh(
     new THREE.CylinderGeometry(0.05, 0.04, tweaks.cyl_length, 64, 64),
     ballMaterial
 )
-cyl1.geometry.setAttribute('uv2', new THREE.BufferAttribute(sphere.geometry.attributes.uv.array, 2))
-cyl1.position.z = 0.78;
-cyl1.position.y = 0.22;
+cyl1.position.y = 0.35;
 
 const cyl2 = new THREE.Mesh(
     new THREE.CylinderGeometry(0.04, 0.05,tweaks.cyl_length, 64, 64),
     ballMaterial
 )
-cyl2.geometry.setAttribute('uv2', new THREE.BufferAttribute(sphere.geometry.attributes.uv.array, 2))
 cyl2.rotation.z = 0.8;
-cyl2.position.z = 0.78;
-cyl2.position.y = -0.16;
-cyl2.position.x = 0.18;
+cyl2.position.y = -0.22;
+cyl2.position.x = 0.25;
 
 const cyl3 = new THREE.Mesh(
     new THREE.CylinderGeometry(0.04, 0.05, tweaks.cyl_length, 64, 64),
     ballMaterial
 )
-cyl3.geometry.setAttribute('uv2', new THREE.BufferAttribute(sphere.geometry.attributes.uv.array, 2))
 cyl3.rotation.z = -0.8;
-cyl3.position.z = 0.78;
-cyl3.position.y = -0.16;
-cyl3.position.x = -0.18;
+cyl3.position.y = -0.22;
+cyl3.position.x = -0.25;
 
 const torus = new THREE.Mesh(
     new THREE.TorusGeometry(1.05, 0.1, 64, 128),
     material
 )
-torus.geometry.setAttribute('uv2', new THREE.BufferAttribute(torus.geometry.attributes.uv.array, 2))
-// torus.position.x = 1.5
-scene.add(sphere, cyl1, cyl2, cyl3, torus)
+
+const starMaterial = new THREE.MeshStandardMaterial();
+starMaterial.color = new THREE.Color('red');
+starMaterial.flatShading = true;
+
+
+const star = new THREE.Mesh(new THREE.OctahedronGeometry(0.2, 1), starMaterial);
+scene.add(sphere, cyl1, cyl2, cyl3, torus, star);
 
 let sphereFolder = gui.addFolder('Sphere');
 sphereFolder.add(sphereMaterial, 'alphaTest', 0, 1, 0.01).name('Alpha');
